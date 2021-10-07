@@ -1,6 +1,6 @@
 import os
 import ast
-import generate_password as new
+import update_password as update
 
 FILE_PATH = os.path.dirname(os.path.abspath(__file__)) + '/.pswd'
 
@@ -18,7 +18,7 @@ def get_password(key):
     try:
         passwords = ast.literal_eval(contents)
         password = passwords[key]
-        new.copy_to_clipboard(password)
+        update.copy_to_clipboard(password)
         return password
     except:
         print('No such key.')
