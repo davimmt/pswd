@@ -11,9 +11,9 @@ FILE_PATH = os.path.dirname(os.path.abspath(__file__)) + '/.pswd'
 def generate_password(key):
     characters = string.ascii_letters + string.digits + string.punctuation
     password = ''.join(random.choice(characters) for i in range(16))
-    print('Password is: [%s]' % password)
+    print('\nPassword: %s' % password)
 
-    store = input('\nDo you wish to store it? ').lower()[0]
+    store = input('\nSave it? ').lower()[0]
     if store == 'y':
         store_password(key, password)
         copy_to_clipboard(password)

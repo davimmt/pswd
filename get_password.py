@@ -21,7 +21,7 @@ def get_password(key):
         update.copy_to_clipboard(password)
         return password
     except:
-        print('No such key.')
+        print('\nNo such key.')
         return False
 
 def is_new_key(key): return False if key in get_passwords() else True
