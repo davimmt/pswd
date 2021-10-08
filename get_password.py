@@ -15,13 +15,16 @@ def get_password(key):
     file = open(FILE_PATH, 'r')
     contents = file.read()
     file.close()
-    try:
-        passwords = ast.literal_eval(contents)
-        password = passwords[key]
-        update.copy_to_clipboard(password)
-        return password
-    except:
-        print('\nNo such key.')
-        return False
+    passwords = ast.literal_eval(contents)
+    password = passwords[key]
+    update.copy_to_clipboard(password)
+    return password
 
-def is_new_key(key): return False if key in get_passwords() else True
+def show_all():
+    passwords = get_passwords()
+    passwords.pop('1')
+    padding = 0
+    for key in passwords: 
+        if len(key) > padding and len(key) < 17: padding = len(key)
+
+    for key in passwords: print('%s = %s' % (key.ljust(padding, ' '), passwords[key]))

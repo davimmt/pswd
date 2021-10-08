@@ -12,15 +12,23 @@ if __name__ == "__main__":
     except: 
         with open(FILE_PATH, 'w') as file: file.write(json.dumps({'1':'1'}))
 
+    # Listing all, return existing or create new
     key = sys.argv[1]
-    # Return existing or create new
     if len(sys.argv) == 2:
-        password = get.get_password(key)
-        if not password:
-            update.generate_password(key)
+        show_all_operator = ['s', 'show', 'all', 'show-all', 'sa']
+
+        if key in show_all_operator:
+            get.show_all()
+        else:
+            password = get.get_password(key)
+            if not password:
+                update.generate_password(key)
     # Remove or manually insert key value
     else:
-        if sys.argv[2] == 'rm':
+        operator = sys.argv[2]
+        remove_operator = ['r', 'd', 'rm', 'del', 'remove', 'delete']
+
+        if operator in remove_operator:
             update.delete_password(key)
         else:
-            update.generate_password(key, sys.argv[2])
+            update.generate_password(key, operator)
