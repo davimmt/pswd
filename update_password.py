@@ -2,7 +2,7 @@ import os
 import json
 import random
 import string
-import pyperclip
+import pandas
 from datetime import datetime
 import get_password as get
 
@@ -19,8 +19,8 @@ def generate_password(key):
         copy_to_clipboard(password)
 
 def copy_to_clipboard(string):
-    pyperclip.copy(string)
-    paste = pyperclip.paste()
+    to_clipboard = pandas.DataFrame([string])
+    to_clipboard.to_clipboard(index=False, header=False, excel=False)
 
 def store_password(key, value):
     passwords = get.get_passwords()
