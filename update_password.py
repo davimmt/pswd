@@ -8,15 +8,13 @@ import get_password as get
 
 FILE_PATH = os.path.dirname(os.path.abspath(__file__)) + '/.pswd'
 
-def generate_password(key):
-    characters = string.ascii_letters + string.digits + string.punctuation
-    password = ''.join(random.choice(characters) for i in range(16))
-    print('\nPassword: %s' % password)
+def generate_password(key, value=False):
+    if not value:
+        characters = string.ascii_letters + string.digits + string.punctuation
+        value = ''.join(random.choice(characters) for i in range(16))
 
-    store = input('\nSave it? ').lower()[0]
-    if store == 'y':
-        store_password(key, password)
-        copy_to_clipboard(password)
+    store_password(key, value)
+    copy_to_clipboard(value)
 
 def copy_to_clipboard(string):
     to_clipboard = pandas.DataFrame([string])
