@@ -20,9 +20,11 @@ if __name__ == "__main__":
         if key in show_all_operator:
             get.show_all()
         else:
-            password = get.get_password(key)
-            if not password:
+            try:
+                password = get.get_password(key)
+            except:
                 update.generate_password(key)
+                print('New.')
     # Remove or manually insert key value
     else:
         operator = sys.argv[2]
