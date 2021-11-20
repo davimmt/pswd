@@ -1,36 +1,66 @@
-import os
-import sys
-import json
-import update_password as update
-import get_password as get
-
-FILE_PATH = os.path.dirname(os.path.abspath(__file__)) + '/.pswd'
+from sys import argv
+from os import path, environ, getenv
+from password_create import create_password
+from password_insert import insert_password
+from password_update import update_password
+from password_delete import delete_password
+from password_select import show_all, get_password
+from password_handlers import man, show_man, man_all_arguments
 
 if __name__ == "__main__":
-    # Check if file exists
-    try:  get.get_passwords()
-    except: 
-        with open(FILE_PATH, 'w') as file: file.write(json.dumps({'1':'1'}))
+    environ['FILE_PATH'] = f"{path.dirname(path.abspath(__file__)) + '/.pswd'}"
+    FILE_PATH = getenv('FILE_PATH')
 
-    # Listing all, return existing or create new
-    key = sys.argv[1]
-    if len(sys.argv) == 2:
-        show_all_operator = ['s', 'show', 'all', 'show-all', 'sa']
+    # Tries to create database file, ignore if already exists
+    try:
+        with open(FILE_PATH, "x") as database: pass
+    except FileExistsError:
+        pass
 
-        if key in show_all_operator:
-            get.show_all()
+    arguments = {}
+    # Use case for try statement: no arguments will print help
+    try:
+        arguments['mode_or_key'] = argv[1]
+    except IndexError:
+        exit(show_man())
+    # Use case for try statement: one argument only is a shorthand for select mode
+    try:
+        arguments['key'] = argv[2]
+    except IndexError:
+        pass
+    # Use case: insert key with defined value
+    try:
+        arguments['value'] = argv[3]
+    except IndexError:
+        pass
+
+    if arguments['mode_or_key'].startswith('-'):
+        man = man()
+        mode = arguments['mode_or_key']
+
+        # Invalid mode
+        if mode not in man_all_arguments():
+            print('Possible options:')
+            exit(show_man())
+        # Insert requires password name and value
+        elif mode in man['insert']['args'] and len(arguments) < 3:
+            exit('I need the password name and its value.')
+        # Other methods (except for 'show') requires password name
+        elif mode not in man['show']['args'] and len(arguments) < 2:
+            exit('I need the password name.')
+            
+        if mode in man['create']['args']:
+            create_password(arguments['key'])
+        elif mode in man['insert']['args']:
+            insert_password(arguments['key'], arguments['value'])
+        elif mode in man['show']['args']:
+            show_all()
+        elif mode in man['update']['args']:
+            update_password(arguments['key'])
+        elif mode in man['delete']['args']:
+            delete_password(arguments['key'])
         else:
-            try:
-                password = get.get_password(key)
-            except:
-                update.generate_password(key)
-                print('New.')
-    # Remove or manually insert key value
+            exit(show_man())
     else:
-        operator = sys.argv[2]
-        remove_operator = ['r', 'd', 'rm', 'del', 'remove', 'delete']
-
-        if operator in remove_operator:
-            update.delete_password(key)
-        else:
-            update.generate_password(key, operator)
+        key = arguments['mode_or_key']
+        get_password(key)
