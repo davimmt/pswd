@@ -1,5 +1,4 @@
-import base64
-import cryptography
+import time
 from os import getenv
 from json import dumps
 from random import choice
@@ -12,6 +11,7 @@ from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.asymmetric import padding
 
 ENCODING = 'ISO-8859-1'
+PURGE_TIME = 3
 
 def generate_password(size=16, chars=punctuation + ascii_letters + digits):
     '''Generates random string.
@@ -37,6 +37,13 @@ def copy_to_clipboard(value, encypted=False):
     '''
     value = decrypt_password(value) if encypted else value
     to_clipboard = DataFrame([value])
+    to_clipboard.to_clipboard(index=False, header=False, excel=False)
+    print("Copied to clipboad.")
+    for i in range(PURGE_TIME, 0, -1):
+        print(f"Purging from clipboard in {i}...")
+        time.sleep(1)
+    print("Purged.")
+    to_clipboard = DataFrame([""])
     to_clipboard.to_clipboard(index=False, header=False, excel=False)
 
 def encrypt_password(value):
