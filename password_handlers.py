@@ -48,11 +48,15 @@ def copy_to_clipboard(value, encypted=False):
 
 def encrypt_password(value):
     value = value.encode(ENCODING)
-    with open(getenv('PUBK_PATH'), "rb") as key_file:
-        public_key = serialization.load_pem_public_key(
-            key_file.read(),
-            backend=default_backend()
-        )
+    try:
+        with open(getenv('PUBK_PATH'), "rb") as key_file:
+            public_key = serialization.load_pem_public_key(
+                key_file.read(),
+                backend=default_backend()
+            )
+    except FileNotFoundError:
+        print(f"Public key file not found at {getenv('PUBK_PATH')}")
+        exit()
     encrypted_value = public_key.encrypt(
         value,
         padding.OAEP(
@@ -77,7 +81,7 @@ def decrypt_password(value):
                 print('Wrong private key.')
                 exit()
     except FileNotFoundError:
-        print('Private key file not found.')
+        print(f"Private key file not found at {getenv('PRIK_PATH')}")
         exit()
     decrypted_value = private_key.decrypt(
         value,
