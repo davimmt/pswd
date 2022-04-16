@@ -15,9 +15,8 @@ def update_password(key):
     else:
         passwords_old = get_passwords()
     value = generate_password()
-    passwords[key] = value
-    store_password(passwords)
+    store_password(key, value, passwords)
     if passwords_old:
         log_change('update', key, passwords_old)
-    copy_to_clipboard(value)
+    copy_to_clipboard(key, passwords)
     return True

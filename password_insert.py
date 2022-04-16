@@ -10,7 +10,6 @@ def insert_password(key, value):
     '''
     passwords = get_passwords()
     if key in passwords: log_change('change', key, passwords)
-    passwords[key] = value
-    store_password(passwords)
-    copy_to_clipboard(value)
+    store_password(key, value, passwords)
+    copy_to_clipboard(key, passwords)
     return True

@@ -11,7 +11,6 @@ def create_password(key):
     passwords = get_passwords()
     if key in passwords: exit('Password exists.')
     value = generate_password()
-    passwords[key] = value
-    store_password(passwords)
-    copy_to_clipboard(value)
+    store_password(key, value, passwords)
+    copy_to_clipboard(key, passwords)
     return True

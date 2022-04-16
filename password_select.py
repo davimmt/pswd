@@ -1,5 +1,6 @@
 import os
 from json import load, decoder
+from password_handlers import decrypt_password
 from password_handlers import copy_to_clipboard
 
 def get_passwords():
@@ -20,11 +21,11 @@ def get_password(key):
     '''
     passwords = get_passwords()
     try:
-        password = passwords[key]
+        passwords[key]
     except KeyError:
         exit('No such key.')
-    copy_to_clipboard(password)
-    return password
+    copy_to_clipboard(key, passwords)
+    return True
 
 def show_all():
     '''Print all passwords.
@@ -39,6 +40,6 @@ def show_all():
             padding = len(key)
 
     for key in passwords: 
-        print('%s = %s' % (key.ljust(padding, ' '), passwords[key]))
+        print('%s = %s' % (key.ljust(padding, ' '), decrypt_password(passwords[key])))
 
     return passwords

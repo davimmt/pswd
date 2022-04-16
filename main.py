@@ -1,4 +1,6 @@
+import os
 from sys import argv
+from pathlib import Path
 from os import path, environ, getenv
 from password_create import create_password
 from password_insert import insert_password
@@ -8,12 +10,14 @@ from password_select import show_all, get_password
 from password_handlers import man, show_man, man_all_arguments
 
 if __name__ == "__main__":
-    environ['FILE_PATH'] = f"{path.dirname(path.abspath(__file__)) + '/.pswd'}"
+    environ['FILE_PATH'] = os.getenv('PSWD_PATH_FILE', f"{str(Path.home())}/.pswd").replace("~", str(Path.home()))
+    environ['PUBK_PATH'] = os.getenv('PSWD_PATH_PUBK', f"{str(Path.home())}/.rsa_keys/pswd.pub").replace("~", str(Path.home()))
+    environ['PRIK_PATH'] = os.getenv('PSWD_PATH_PRIK', f"{str(Path.home())}/.rsa_keys/pswd").replace("~", str(Path.home()))
     FILE_PATH = getenv('FILE_PATH')
 
     # Tries to create database file, ignore if already exists
     try:
-        with open(FILE_PATH, "x") as database: pass
+        with open(os.open(FILE_PATH, os.O_CREAT | os.O_WRONLY, 0o600), "x") as database: pass
     except FileExistsError:
         pass
 
