@@ -94,7 +94,7 @@ def log_change(action, key, passwords):
         pass
     today = datetime.today().isoformat()
     with open(FILE_BKP_PATH, 'a') as file: 
-        file.write(f'{today} -- {action} [{key}] -- {dumps(passwords)}\n')
+        file.write(f'{today} -- {action} [{key}] -- {dumps({key: passwords[key]})}\n')
 
 def man():
     '''Manual.
