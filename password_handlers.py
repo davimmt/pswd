@@ -6,9 +6,8 @@ from pandas import DataFrame
 from datetime import datetime
 from cryptography.hazmat.primitives import hashes
 from string import punctuation, ascii_letters, digits
-from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.asymmetric import padding
+from keys_handlers import check_pub_key, check_pri_key, validate_key_pair_matching
 
 ENCODING = 'ISO-8859-1'
 PURGE_TIME = 3
@@ -47,16 +46,9 @@ def copy_to_clipboard(value, encypted=False):
     to_clipboard.to_clipboard(index=False, header=False, excel=False)
 
 def encrypt_password(value):
+    public_key = check_pub_key(getenv('PUBK_PATH'))
+    validate_key_pair_matching(public_key, check_pri_key(getenv('PRIK_PATH')))
     value = value.encode(ENCODING)
-    try:
-        with open(getenv('PUBK_PATH'), "rb") as key_file:
-            public_key = serialization.load_pem_public_key(
-                key_file.read(),
-                backend=default_backend()
-            )
-    except FileNotFoundError:
-        print(f"Public key file not found at {getenv('PUBK_PATH')}")
-        exit()
     encrypted_value = public_key.encrypt(
         value,
         padding.OAEP(
@@ -68,29 +60,19 @@ def encrypt_password(value):
     return encrypted_value.decode(ENCODING)
 
 def decrypt_password(value):
+    private_key = check_pri_key(getenv('PRIK_PATH'))
     value = value.encode(ENCODING)
     try:
-        with open(getenv('PRIK_PATH'), "rb") as key_file:
-            try:
-                private_key = serialization.load_pem_private_key(
-                    key_file.read(),
-                    password=None,
-                    backend=default_backend()
-                )
-            except ValueError:
-                print('Wrong private key.')
-                exit()
-    except FileNotFoundError:
-        print(f"Private key file not found at {getenv('PRIK_PATH')}")
-        exit()
-    decrypted_value = private_key.decrypt(
-        value,
-        padding.OAEP(
-            mgf=padding.MGF1(algorithm=hashes.SHA256()),
-            algorithm=hashes.SHA256(),
-            label=None
+        decrypted_value = private_key.decrypt(
+            value,
+            padding.OAEP(
+                mgf=padding.MGF1(algorithm=hashes.SHA256()),
+                algorithm=hashes.SHA256(),
+                label=None
+            )
         )
-    )
+    except:
+        exit(print("Wrong private key."))
     return decrypted_value.decode(ENCODING)
 
 def log_change(action, key, passwords):
