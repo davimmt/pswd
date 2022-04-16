@@ -21,10 +21,10 @@ def get_password(key):
     '''
     passwords = get_passwords()
     try:
-        passwords[key]
+        value = passwords[key]
     except KeyError:
         exit('No such key.')
-    copy_to_clipboard(key, passwords)
+    copy_to_clipboard(value, True)
     return True
 
 def show_all():

@@ -20,12 +20,26 @@ def generate_password(size=16, chars=punctuation + ascii_letters + digits):
     '''
     return ''.join(choice(chars) for char in range(size))
 
-def store_password(key, value, passwords):
+def store_password(passwords):
     '''Write to database file.
 
-    Takes the new secret, encrypts it, merge with all the passwords and dumps it
+    Gets all the passwords and dumps it
     in the database file.
     '''
+    with open(getenv('FILE_PATH'), 'w') as file:
+        file.write(dumps(passwords))
+    return True
+
+def copy_to_clipboard(value, encypted=False):
+    '''Copies a string to clipboard.
+
+    Takes the password name and copy its decrypted value to the clipboard.
+    '''
+    value = decrypt_password(value) if encypted else value
+    to_clipboard = DataFrame([value])
+    to_clipboard.to_clipboard(index=False, header=False, excel=False)
+
+def encrypt_password(value):
     value = value.encode(ENCODING)
     with open(getenv('PUBK_PATH'), "rb") as key_file:
         public_key = serialization.load_pem_public_key(
@@ -40,19 +54,7 @@ def store_password(key, value, passwords):
             label=None
         )
     )
-    with open(getenv('FILE_PATH'), 'w') as file:
-        passwords[key] = encrypted_value.decode(ENCODING)
-        file.write(dumps(passwords))
-    return True
-
-def copy_to_clipboard(key, passwords):
-    '''Copies a string to clipboard.
-
-    Takes the password name and copy its decrypted value to the clipboard.
-    '''
-    decrypted_value = decrypt_password(passwords[key])
-    to_clipboard = DataFrame([decrypted_value])
-    to_clipboard.to_clipboard(index=False, header=False, excel=False)
+    return encrypted_value.decode(ENCODING)
 
 def decrypt_password(value):
     value = value.encode(ENCODING)

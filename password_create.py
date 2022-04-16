@@ -1,5 +1,6 @@
 from password_handlers import copy_to_clipboard, store_password, generate_password
 from password_select import get_passwords
+from password_handlers import encrypt_password
 
 def create_password(key):
     '''Creates a password.
@@ -11,6 +12,7 @@ def create_password(key):
     passwords = get_passwords()
     if key in passwords: exit('Password exists.')
     value = generate_password()
-    store_password(key, value, passwords)
-    copy_to_clipboard(key, passwords)
+    passwords[key] = encrypt_password(value)
+    store_password(passwords)
+    copy_to_clipboard(value)
     return True

@@ -1,5 +1,6 @@
 from password_handlers import copy_to_clipboard, store_password, generate_password, log_change
 from password_select import get_passwords
+from password_handlers import encrypt_password
 
 def update_password(key):
     '''Creates or updates a password.
@@ -15,8 +16,9 @@ def update_password(key):
     else:
         passwords_old = get_passwords()
     value = generate_password()
-    store_password(key, value, passwords)
+    passwords[key] = encrypt_password(value)
+    store_password(passwords)
     if passwords_old:
         log_change('update', key, passwords_old)
-    copy_to_clipboard(key, passwords)
+    copy_to_clipboard(value)
     return True
