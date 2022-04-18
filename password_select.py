@@ -40,6 +40,6 @@ def show_all():
             padding = len(key)
 
     for key in passwords: 
-        print('%s = %s' % (key.ljust(padding, ' '), decrypt_password(passwords[key])))
+        print('%s = %s' % (key.ljust(padding, ' '), decrypt_password(passwords[key], True)))
 
     return passwords

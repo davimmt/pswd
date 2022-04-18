@@ -16,7 +16,7 @@ def check_pub_key(pubk_path):
         exit(print(f"You gave me a directory ({pubk_path}) path, I need a file path."))
     return public_key
 
-def check_pri_key(prik_path):
+def check_pri_key(prik_path, ignore_fail=False):
     try:
         with open(prik_path, "rb") as key_file:
             try:
@@ -26,7 +26,8 @@ def check_pri_key(prik_path):
                     backend=default_backend()
                 )
             except ValueError:
-                exit(print('Wrong private key.'))
+                if ignore_fail: return True
+                else: exit(print("Wrong private key."))
     except FileNotFoundError:
         exit(print(f"Private key file not found at {prik_path}"))
     except IsADirectoryError:

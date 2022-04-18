@@ -59,8 +59,8 @@ def encrypt_password(value):
     )
     return encrypted_value.decode(ENCODING)
 
-def decrypt_password(value):
-    private_key = check_pri_key(getenv('PRIK_PATH'))
+def decrypt_password(value, ignore_fail=False):
+    private_key = check_pri_key(getenv('PRIK_PATH'), ignore_fail)
     value = value.encode(ENCODING)
     try:
         decrypted_value = private_key.decrypt(
@@ -72,7 +72,8 @@ def decrypt_password(value):
             )
         )
     except:
-        exit(print("Wrong private key."))
+        if ignore_fail: return "<couldn't decrypt with provided private key>"
+        else: exit(print("Wrong private keys."))
     return decrypted_value.decode(ENCODING)
 
 def log_change(action, key, passwords):
