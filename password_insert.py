@@ -13,5 +13,4 @@ def insert_password(key, value):
     if key in passwords: log_change('change', key, passwords)
     passwords[key] = encrypt_password(value)
     store_password(passwords)
-    copy_to_clipboard(value)
     return True
